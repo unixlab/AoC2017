@@ -49,4 +49,6 @@ func main() {
 	}
 
 	fmt.Println(getDistance(0, 0, x, y))
+
+	// part 2 from "https://oeis.org/A141481/b141481.txt"
 }
