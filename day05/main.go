@@ -17,6 +17,9 @@ func main() {
 		data, _ := strconv.Atoi(scanner.Text())
 		memory = append(memory, data)
 	}
+	// save memory
+	savedMemory := make([]int, len(memory))
+	copy(savedMemory, memory)
 
 	offset := 0
 	counter := 0
@@ -26,6 +29,21 @@ func main() {
 		offset += jump
 		counter++
 	}
+	fmt.Println(counter)
 
+	// reset memory, counter and offset
+	offset = 0
+	counter = 0
+	copy(memory, savedMemory)
+	for offset < len(memory) {
+		jump := memory[offset]
+		if jump >= 3 {
+			memory[offset]--
+		} else {
+			memory[offset]++
+		}
+		offset += jump
+		counter++
+	}
 	fmt.Println(counter)
 }
