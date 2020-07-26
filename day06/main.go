@@ -15,7 +15,7 @@ func intArrayToString(array []int) string {
 
 func main() {
 	var banks []int
-	seen := make(map[string]bool, 100)
+	seen := make(map[string]int, 100)
 
 	file, _ := os.Open("input.txt")
 	scanner := bufio.NewScanner(file)
@@ -51,12 +51,15 @@ func main() {
 			banks[pointer]++
 		}
 
-		if seen[intArrayToString(banks)] {
+		if loopSize, exists := seen[intArrayToString(banks)]; exists {
+			fmt.Println(runs)
+			fmt.Println(loopSize)
 			break
 		}
 
-		seen[intArrayToString(banks)] = true
+		seen[intArrayToString(banks)] = 0
+		for k, v := range seen {
+			seen[k] = v + 1
+		}
 	}
-
-	fmt.Println(runs)
 }
