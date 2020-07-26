@@ -9,9 +9,21 @@ import (
 )
 
 type node struct {
-	Name   string
-	Weight int
-	Parent *node
+	Name     string
+	Weight   int
+	Parent   *node
+	Children []*node
+}
+
+func sumNode(node *node) int {
+	sum := 0
+	if node.Children != nil {
+		for _, c := range node.Children {
+			sum += sumNode(c)
+		}
+	}
+	sum += node.Weight
+	return sum
 }
 
 func main() {
@@ -35,7 +47,7 @@ func main() {
 		nodeName := line[:whitespacePos]
 		nodeWeight, _ := strconv.Atoi(line[openBracketPos+1 : closeBracketPos])
 
-		nodes = append(nodes, node{nodeName, nodeWeight, nil})
+		nodes = append(nodes, node{nodeName, nodeWeight, nil, nil})
 	}
 
 	for pos, node := range nodes {
@@ -53,13 +65,61 @@ func main() {
 
 			for _, childNode := range strings.Split(line[pos:], ", ") {
 				nodeIndex[childNode].Parent = nodeAddr
+				nodeAddr.Children = append(nodeAddr.Children, nodeIndex[childNode])
 			}
 		}
 	}
 
-	for _, node := range nodes {
+	var root *node
+
+	for nodePos, node := range nodes {
 		if node.Parent == nil {
-			fmt.Println(node.Name)
+			root = &nodes[nodePos]
+		}
+	}
+
+	fmt.Println(root.Name)
+
+	foundFault := false
+	for {
+		dist := make(map[int]int, 2)
+		weights := make(map[*node]int, len(root.Children))
+		for _, c := range root.Children {
+			sum := sumNode(c)
+			weights[c] = sum
+			dist[sum]++
+		}
+
+		outlier := 0
+		for sum, counter := range dist {
+			if counter == 1 {
+				outlier = sum
+			}
+		}
+
+		if foundFault {
+			var numbers [2]int
+			for k, v := range dist {
+				numbers[v-1] = k
+			}
+			adjust := numbers[1] - numbers[0]
+			for node, weight := range weights {
+				if weight == outlier {
+					fmt.Println(node.Weight + adjust)
+				}
+			}
+			break
+		}
+
+		if outlier == 0 {
+			root = root.Parent
+			foundFault = true
+		} else {
+			for node, weight := range weights {
+				if weight == outlier {
+					root = node
+				}
+			}
 		}
 	}
 }
