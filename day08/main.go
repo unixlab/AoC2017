@@ -9,6 +9,8 @@ import (
 )
 
 func main() {
+	var overallMaxK string
+	var overallMaxV int
 	storage := make(map[string]int, 100)
 	file, _ := os.Open("input.txt")
 	scanner := bufio.NewScanner(file)
@@ -108,6 +110,12 @@ func main() {
 		default:
 			panic("error")
 		}
+		for k, v := range storage {
+			if v > overallMaxV {
+				overallMaxK = k
+				overallMaxV = v
+			}
+		}
 	}
 	var maxK string
 	var maxV int
@@ -118,4 +126,5 @@ func main() {
 		}
 	}
 	fmt.Printf("max is %d at %s\n", maxV, maxK)
+	fmt.Printf("overall max is %d at %s\n", overallMaxV, overallMaxK)
 }
