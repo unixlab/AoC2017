@@ -15,13 +15,15 @@ func removeExclamationMark(s string) string {
 	return s
 }
 
-func removeGarbage(s string) string {
+func removeGarbage(s string) (string, int) {
+	garbageSum := 0
 	for strings.Index(s, "<") >= 0 {
 		sPos := strings.Index(s, "<")
 		ePos := strings.Index(s, ">")
 		s = s[:sPos] + s[ePos+1:]
+		garbageSum += ePos - (sPos + 1)
 	}
-	return s
+	return s, garbageSum
 }
 
 func removeComma(s string) string {
@@ -48,9 +50,10 @@ func main() {
 
 	for scanner.Scan() {
 		withoutExclamationMark := removeExclamationMark(scanner.Text())
-		withoutGarbage := removeGarbage(withoutExclamationMark)
+		withoutGarbage, garbageSum := removeGarbage(withoutExclamationMark)
 		withoutComma := removeComma(withoutGarbage)
 		sum := countGroups(withoutComma)
 		fmt.Printf("part 1 => %d\n", sum)
+		fmt.Printf("part 2 => %d\n", garbageSum)
 	}
 }
